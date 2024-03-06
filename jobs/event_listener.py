@@ -47,13 +47,13 @@ def job_executed(event):
 def job_added(event):
     """Job added event."""
     with scheduler.app.app_context():
-        logger.info('Job %s added - %s', event.job_id, event.scheduled_run_time)
+        logger.info('Job %s added', event.job_id)
 
 
 def job_removed(event):
     """Job removed event."""
     with scheduler.app.app_context():
-        logger.info('Job %s removed - %s', event.job_id, event.scheduled_run_time)
+        logger.info('Job %s removed', event.job_id)
 
 
 def job_submitted(event):
