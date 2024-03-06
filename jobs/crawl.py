@@ -1,3 +1,4 @@
+import os
 from multiprocessing import Process
 
 import scrapy
@@ -20,8 +21,8 @@ settings = Settings(values={
         "melon_chart.melon_chart.pipelines.MongoDBWriterPipeline": 400,
         "melon_chart.melon_chart.pipelines.JsonWriterPipeline": 500,
     },
-    'MONGO_URI': "mongodb+srv://admin:XlFNdu6vnsONSko5@cluster0.vyuev3y.mongodb.net/music_charts?retryWrites=true&w=majority&appName=Cluster0",
-    'MONGO_DATABASE': "music_charts",
+    'MONGO_URI': os.environ.get('MONGO_URI'),
+    'MONGO_DATABASE': os.environ.get('MONGO_MUSIC_CHARTS_DBNAME'),
     'REQUEST_FINGERPRINTER_IMPLEMENTATION': "2.7",
     'FEED_EXPORT_ENCODING': "utf-8"
 })

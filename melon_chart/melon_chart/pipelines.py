@@ -31,6 +31,13 @@ class JsonWriterPipeline(object):
             return item
 
 
+def search_video_id(song_title, song_artists):
+    search_result = search(part='snippet', q=song_title + ' ' + song_artists, maxResults=1, type='video')
+    if search_result is not None:
+        return search_result['items'][0]['id']['videoId']
+    return ''
+
+
 class MongoDBWriterPipeline(object):
 
     def __init__(self, mongo_uri, mongo_db):
@@ -59,27 +66,34 @@ class MongoDBWriterPipeline(object):
             album_image = row['album_image']
 
             song = self.db.songs.find_one({'song_title': song_title, 'song_artists': song_artists})
+
             youtube_video_id = ''
 
-            if song is None or song['youtube_video_id'] == '':
-                search_result = search(part='snippet', q=song_title + ' ' + song_artists, maxResults=1, type='video')
-                if search_result is not None:
-                    youtube_video_id = search_result['items'][0]['id']['videoId']
+            if song is None:
+                youtube_video_id = search_video_id(song_title, song_artists)
+                self.db.songs.insert_one(
+                        {'song_title': song_title, 'song_artists': song_artists, 'album_name': album_name,
+                         'album_image': album_image, 'youtube_video_id': youtube_video_id})
+
+
+            if song is not None and song['youtube_video_id'] == '':
                 # self.db.songs.insert_one(
                 #         {'song_title': song_title, 'song_artists': song_artists, 'album_name': album_name,
                 #          'album_image': album_image, 'youtube_video_id': youtube_video_id})
+                youtube_video_id = search_video_id(song_title, song_artists)
                 self.db.songs.update_one(
-                    {'song_title': song_title, 'song_artists': song_artists, 'album_name': album_name, 'album_image': album_image},
-                    {'$setOnInsert': {'song_title': song_title, 'song_artists': song_artists, 'album_name': album_name, 'album_image': album_image, 'youtube_video_id': youtube_video_id}},
-                    upsert=True)
-            else:
-                youtube_video_id = song['youtube_video_id']
+                    {'song_title': song_title, 'song_artists': song_artists, 'album_name': album_name, 'album_image': album_image, 'youtube_video_id': ''},
+                    {'$set': {'song_title': song_title, 'song_artists': song_artists, 'album_name': album_name, 'album_image': album_image, 'youtube_video_id': youtube_video_id}})
 
             # self.db.songs.update_one(
             #     {'song_title': song_title, 'song_artists': song_artists, 'album_name': album_name, 'album_image': album_image},
             #     {'$setOnInsert': {'song_title': song_title, 'song_artists': song_artists, 'album_name': album_name, 'album_image': album_image, 'youtube_video_id': youtube_video_id}},
             #     upsert=True)
-            row['youtube_video_id'] = youtube_video_id
+
+            if song['youtube_video_id'] != '':
+                row['youtube_video_id'] = song['youtube_video_id']
+            else:
+                row['youtube_video_id'] = youtube_video_id
 
         if item['type'] == 'TOP100':
             ranking = self.db.rankings.find_one({'type': 'TOP100', 'year': item['year'], 'hour': item['hour']})
@@ -96,3 +110,4 @@ class MongoDBWriterPipeline(object):
 
         item.pop('_id', None)
         return item
+
