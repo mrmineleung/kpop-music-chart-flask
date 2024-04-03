@@ -1,16 +1,16 @@
 import scrapy
 
 
-class MelonChartDaySpider(scrapy.Spider):
-    name = 'melon_chart_day'
+class MelonChartWeekSpider(scrapy.Spider):
+    name = 'melon_chart_week'
     allowed_domains = ['melon.com']
-    start_urls = ['https://www.melon.com/chart/day/index.htm']
+    start_urls = ['https://www.melon.com/chart/week/index.htm']
 
     def parse(self, response):
 
         chart = 'Melon'
-        type = 'DAY'
-        date = response.xpath('//span[@class="year"]/text()').extract_first()
+        type = 'WEEK'
+        date = response.xpath('//span[@class="yyyymmdd"]/text()').extract_first().strip()
 
         result = {'chart': chart, 'type': type, 'date': date, 'ranking': []}
 

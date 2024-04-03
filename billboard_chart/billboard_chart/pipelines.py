@@ -14,7 +14,7 @@ from pymongo import MongoClient
 from .youtube_api import search_data_from_youtube
 
 
-class MelonChartPipeline:
+class BillboardChartPipeline:
     def process_item(self, item, spider):
         return item
 
@@ -55,7 +55,6 @@ class SongMongoDBWriterPipeline(object):
         for row in item['ranking']:
             song_title = row['song_title']
             song_artists = row['song_artists']
-            album_name = row['album_name']
             album_image = row['album_image']
 
             song = self.db.songs.find_one({'song_title': song_title, 'song_artists': song_artists})
@@ -65,25 +64,25 @@ class SongMongoDBWriterPipeline(object):
             youtube_video_author = ''
 
             if song is None:
-                search_result = search_data_from_youtube(f'{song_title} {song_artists} Music Video')
+                search_result = search_data_from_youtube(f'{song_title} {song_artists}')
                 youtube_video_id = search_result['id']
                 youtube_video_title = search_result['title']
                 youtube_video_author = search_result['author']
                 self.db.songs.insert_one(
-                    {'song_title': song_title, 'song_artists': song_artists, 'album_name': album_name,
+                    {'song_title': song_title, 'song_artists': song_artists,
                      'album_image': album_image, 'youtube_video_id': youtube_video_id,
                      'youtube_video_title': youtube_video_title, 'youtube_video_author': youtube_video_author})
 
             if song is not None and song['youtube_video_id'] == '':
-                search_result = search_data_from_youtube(f'{song_title} {song_artists} Music Video')
+                search_result = search_data_from_youtube(f'{song_title} {song_artists}')
                 youtube_video_id = search_result['id']
                 youtube_video_title = search_result['title']
                 youtube_video_author = search_result['author']
                 self.db.songs.update_one(
-                    {'song_title': song_title, 'song_artists': song_artists, 'album_name': album_name,
-                     'album_image': album_image, 'youtube_video_id': ''},
-                    {'$set': {'song_title': song_title, 'song_artists': song_artists, 'album_name': album_name,
-                              'album_image': album_image, 'youtube_video_id': youtube_video_id,
+                    {'song_title': song_title, 'song_artists': song_artists, 'album_image': album_image,
+                     'youtube_video_id': ''},
+                    {'$set': {'song_title': song_title, 'song_artists': song_artists, 'album_image': album_image,
+                              'youtube_video_id': youtube_video_id,
                               'youtube_video_title': youtube_video_title,
                               'youtube_video_author': youtube_video_author}})
 
@@ -120,17 +119,10 @@ class RankingMongoDBWriterPipeline(object):
         self.client.close()
 
     def process_item(self, item, spider):
-
-        if item['type'] == 'TOP100' or item['type'] == 'HOT100':
-            ranking = self.db.rankings.find_one(
-                {'chart': item['chart'], 'type': item['type'], 'year': item['year'], 'hour': item['hour'],
-                 'date': item['date']})
-            if ranking is None:
-                self.db.rankings.insert_one(item)
-        elif item['type'] == 'DAY' or item['type'] == 'WEEK' or item['type'] == 'MONTH':
-            ranking = self.db.rankings.find_one({'chart': item['chart'], 'type': item['type'], 'date': item['date']})
-            if ranking is None:
-                self.db.rankings.insert_one(item)
+        ranking = self.db.rankings.find_one(
+            {'chart': item['chart'], 'type': item['type'], 'date': item['date']})
+        if ranking is None:
+            self.db.rankings.insert_one(item)
 
         item.pop('_id', None)
         return item

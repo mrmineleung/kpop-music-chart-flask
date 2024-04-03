@@ -1,4 +1,4 @@
-# Scrapy settings for melon_chart project
+# Scrapy settings for billboard_chart project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -7,17 +7,17 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = "melon_chart"
+BOT_NAME = "billboard_chart"
 
-SPIDER_MODULES = ["melon_chart.spiders"]
-NEWSPIDER_MODULE = "melon_chart.spiders"
+SPIDER_MODULES = ["billboard_chart.spiders"]
+NEWSPIDER_MODULE = "billboard_chart.spiders"
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = "melon_chart (+http://www.yourdomain.com)"
+#USER_AGENT = "billboard_chart (+http://www.yourdomain.com)"
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = False
+ROBOTSTXT_OBEY = True
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -26,6 +26,7 @@ ROBOTSTXT_OBEY = False
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
 #DOWNLOAD_DELAY = 3
+
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
 #CONCURRENT_REQUESTS_PER_IP = 16
@@ -45,13 +46,13 @@ ROBOTSTXT_OBEY = False
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    "melon_chart.middlewares.MelonChartSpiderMiddleware": 543,
+#    "billboard_chart.middlewares.BillboardChartSpiderMiddleware": 543,
 #}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    "melon_chart.middlewares.MelonChartDownloaderMiddleware": 543,
+#    "billboard_chart.middlewares.BillboardChartDownloaderMiddleware": 543,
 #}
 
 # Enable or disable extensions
@@ -63,10 +64,10 @@ ROBOTSTXT_OBEY = False
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   "melon_chart.pipelines.MelonChartPipeline": 300,
-   "melon_chart.pipelines.SongMongoDBWriterPipeline": 400,
-   "melon_chart.pipelines.RankingMongoDBWriterPipeline": 600,
-   "melon_chart.pipelines.JsonWriterPipeline": 500,
+   "billboard_chart.pipelines.BillboardChartPipeline": 300,
+   "billboard_chart.pipelines.SongMongoDBWriterPipeline": 400,
+   "billboard_chart.pipelines.RankingMongoDBWriterPipeline": 600,
+   "billboard_chart.pipelines.JsonWriterPipeline": 500,
 }
 
 MONGO_URI = "mongodb+srv://admin:XlFNdu6vnsONSko5@cluster0.vyuev3y.mongodb.net/music_charts?retryWrites=true&w=majority&appName=Cluster0"

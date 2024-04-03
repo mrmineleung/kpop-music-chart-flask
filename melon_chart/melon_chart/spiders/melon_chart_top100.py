@@ -1,21 +1,23 @@
 import scrapy
 
 
-class MelonChartDaySpider(scrapy.Spider):
-    name = 'melon_chart_day'
+class MelonChartTop100Spider(scrapy.Spider):
+    name = 'melon_chart_top100'
     allowed_domains = ['melon.com']
-    start_urls = ['https://www.melon.com/chart/day/index.htm']
+    start_urls = ['https://www.melon.com/chart/index.htm']
 
     def parse(self, response):
 
         chart = 'Melon'
-        type = 'DAY'
-        date = response.xpath('//span[@class="year"]/text()').extract_first()
+        type = 'TOP100'
+        year = response.xpath('//span[@class="year"]/text()').extract_first()
+        hour = response.xpath('//span[@class="hour"]/text()').extract_first()
+        date = year + ' ' + hour
 
         result = {'chart': chart, 'type': type, 'date': date, 'ranking': []}
 
         self.logger.info("A response from %s just arrived!", response.url)
-        self.logger.info("Chart: %s ; Type: %s ; Date: %s", chart, type, date)
+        self.logger.info("Chart: %s ; Type: %s ; Year: %s ; Hour: %s", chart, type, year, hour)
 
         for row in response.xpath('//*[@class="service_list_song type02 d_song_list"]/table/tbody/tr'):
 

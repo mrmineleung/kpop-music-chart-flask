@@ -1,16 +1,16 @@
 import scrapy
 
 
-class MelonChartDaySpider(scrapy.Spider):
-    name = 'melon_chart_day'
+class MelonChartMonthSpider(scrapy.Spider):
+    name = 'melon_chart_month'
     allowed_domains = ['melon.com']
-    start_urls = ['https://www.melon.com/chart/day/index.htm']
+    start_urls = ['https://www.melon.com/chart/month/index.htm']
 
     def parse(self, response):
 
         chart = 'Melon'
-        type = 'DAY'
-        date = response.xpath('//span[@class="year"]/text()').extract_first()
+        type = 'MONTH'
+        date = response.xpath('//span[@class="yyyymmdd"]/text()').extract_first().strip()
 
         result = {'chart': chart, 'type': type, 'date': date, 'ranking': []}
 
@@ -47,7 +47,6 @@ class MelonChartDaySpider(scrapy.Spider):
             album_name = row.xpath(
                 'td[7]/div[@class="wrap"]/div[@class="wrap_song_info"]/div[@class="ellipsis rank03"]/a/text()').extract()[
                 0]
-
             self.logger.info("rank: %s ; rank_changes_flow: %s ; rank_changes_position: %s ; song_title: %s ; "
                              "song_artists: %s ; album_name: %s", rank, rank_changes_flow, rank_changes_position,
                              song_title, song_artists, album_name)

@@ -5,3 +5,8 @@ python-dotenv~=1.0.1
 Flask-PyMongo~=2.3.0
 Flask-Cors~=4.0.0
 Gunicorn
+pytube
+google-api-python-client
+google-auth
+google-auth-oauthlib
+google-auth-httplib2

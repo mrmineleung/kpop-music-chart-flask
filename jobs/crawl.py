@@ -7,18 +7,21 @@ from scrapy.settings import Settings
 from scrapy.utils.log import configure_logging
 from twisted.internet import reactor
 
-from melon_chart.melon_chart.spiders.melon_chart import MelonChartSpider
+from melon_chart.melon_chart.spiders.melon_chart_top100 import MelonChartTop100Spider
 from melon_chart.melon_chart.spiders.melon_chart_day import MelonChartDaySpider
 from melon_chart.melon_chart.spiders.melon_chart_hot100 import MelonChartHot100Spider
+from melon_chart.melon_chart.spiders.melon_chart_month import MelonChartMonthSpider
+from melon_chart.melon_chart.spiders.melon_chart_week import MelonChartWeekSpider
 
-settings = Settings(values={
+settings = Settings({
     'BOT_NAME': "melon_chart",
     'SPIDER_MODULES': ["melon_chart.melon_chart.spiders"],
     'NEWSPIDER_MODULE': "melon_chart.melon_chart.spiders",
     'ROBOTSTXT_OBEY': False,
     'ITEM_PIPELINES': {
         "melon_chart.melon_chart.pipelines.MelonChartPipeline": 300,
-        "melon_chart.melon_chart.pipelines.MongoDBWriterPipeline": 400,
+        "melon_chart.melon_chart.pipelines.SongMongoDBWriterPipeline": 400,
+        "melon_chart.melon_chart.pipelines.RankingMongoDBWriterPipeline": 600,
         "melon_chart.melon_chart.pipelines.JsonWriterPipeline": 500,
     },
     'MONGO_URI': os.environ.get('MONGO_URI'),
@@ -31,8 +34,8 @@ runner = CrawlerRunner(settings=settings)
 configure_logging(settings)
 
 
-def melon_chart_crawler():
-    process_crawl(MelonChartSpider)
+def melon_chart_top100_crawler():
+    process_crawl(MelonChartTop100Spider)
 
 def melon_chart_hot100_crawler():
     process_crawl(MelonChartHot100Spider)
@@ -40,6 +43,10 @@ def melon_chart_hot100_crawler():
 def melon_chart_day_crawler():
     process_crawl(MelonChartDaySpider)
 
+def melon_chart_week_crawler():
+    process_crawl(MelonChartWeekSpider)
+def melon_chart_month_crawler():
+    process_crawl(MelonChartMonthSpider)
 
 def process_crawl(spider: scrapy.Spider):
     configure_logging(settings=settings)
@@ -49,11 +56,12 @@ def process_crawl(spider: scrapy.Spider):
 
 
 def crawl(spider: scrapy.Spider):
-    runner.crawl(spider)
-    d = runner.join()
+    d = runner.crawl(spider)
     d.addBoth(lambda _: reactor.stop())
     reactor.run()
 
 
 if __name__ == '__main__':
-    process_crawl(MelonChartSpider)
+    process_crawl(MelonChartTop100Spider)
+    process_crawl(MelonChartHot100Spider)
+    process_crawl(MelonChartDaySpider)
