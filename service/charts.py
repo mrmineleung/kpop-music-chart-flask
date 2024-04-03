@@ -1,7 +1,10 @@
 import json
+import logging
 from json import JSONDecodeError
 
 from extensions import mongo
+
+logger = logging.getLogger(__name__)
 
 
 def get_available_charts():
@@ -27,8 +30,10 @@ def _get_billboard_chart(chart_type: str):
                 data = json.load(json_file)
             return data
         except (JSONDecodeError, FileNotFoundError):
+            logger.error('No related json file found')
             return None
     else:
+        logger.error('Chart type not defined')
         return None
 
 
@@ -39,8 +44,10 @@ def _get_melon_chart(chart_type: str):
                 data = json.load(json_file)
             return data
         except (JSONDecodeError, FileNotFoundError):
+            logger.error('No related json file found')
             return None
     else:
+        logger.error('Chart type not defined')
         return None
 
 
