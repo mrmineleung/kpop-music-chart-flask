@@ -1,9 +1,14 @@
+import logging
+
 from enumerations import Charts
 from service import charts as charts_service
 
+logger = logging.getLogger(__name__)
 
 def get_chart(chart_name: str, chart_type: str, args: dict) -> dict:
     chart_data = charts_service.get_chart(chart_name, chart_type)
+
+    logger.info(f'Chart data: {chart_data}')
 
     sorting = args.get('sort', 'asc')
 
