@@ -23,7 +23,7 @@ class BillboardChartBillboard200Spider(scrapy.Spider):
         for temp_row in response.xpath(
                 '//div[@class="o-chart-results-list-row-container"]/div[contains(@class, "charts-result-detail")]'):
             album_image_temp = temp_row.xpath('div/div/div/@style').re(r'url\(\'([^\)\']+)')
-            album_image = None if len(album_image_temp) is 0 else album_image_temp[0]
+            album_image = None if len(album_image_temp) == 0 else album_image_temp[0]
             album_image_list.append(album_image)
 
         for key, row in enumerate(response.xpath(
@@ -57,7 +57,7 @@ class BillboardChartBillboard200Spider(scrapy.Spider):
 
             rank_changes_position = ''
 
-            if last_week_position is not '-':
+            if last_week_position != '-':
                 rank_changes_position = abs(int(rank) - int(last_week_position))
 
             result['ranking'].append({
