@@ -47,10 +47,10 @@ class MelonChartDaySpider(scrapy.Spider):
             album_name = row.xpath(
                 'td[7]/div[@class="wrap"]/div[@class="wrap_song_info"]/div[@class="ellipsis rank03"]/a/text()').extract()[
                 0]
-
-            self.logger.info("rank: %s ; rank_changes_flow: %s ; rank_changes_position: %s ; song_title: %s ; "
-                             "song_artists: %s ; album_name: %s", rank, rank_changes_flow, rank_changes_position,
-                             song_title, song_artists, album_name)
+            #
+            # self.logger.info("rank: %s ; rank_changes_flow: %s ; rank_changes_position: %s ; song_title: %s ; "
+            #                  "song_artists: %s ; album_name: %s", rank, rank_changes_flow, rank_changes_position,
+            #                  song_title, song_artists, album_name)
 
             result['ranking'].append({
                 'rank': rank,

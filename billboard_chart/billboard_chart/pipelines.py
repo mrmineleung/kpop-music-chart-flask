@@ -13,6 +13,7 @@ from pymongo import MongoClient
 
 from .youtube_api import search_data_from_youtube
 
+logger = logging.getLogger(__name__)
 
 class BillboardChartPipeline:
     def process_item(self, item, spider):
@@ -21,7 +22,7 @@ class BillboardChartPipeline:
 
 class JsonWriterPipeline(object):
     def process_item(self, item, spider):
-        logging.getLogger('JsonWriterPipeline').info(
+        logger.info(
             'JsonWriterPipeline : ' + json.dumps(dict(item), ensure_ascii=False))
         try:
             with open(spider.name + '.json', 'w') as fp:

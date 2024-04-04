@@ -120,17 +120,9 @@ class RankingMongoDBWriterPipeline(object):
         self.client.close()
 
     def process_item(self, item, spider):
-
-        if item['type'] == 'TOP100' or item['type'] == 'HOT100':
-            ranking = self.db.rankings.find_one(
-                {'chart': item['chart'], 'type': item['type'], 'year': item['year'], 'hour': item['hour'],
-                 'date': item['date']})
-            if ranking is None:
-                self.db.rankings.insert_one(item)
-        elif item['type'] == 'DAY' or item['type'] == 'WEEK' or item['type'] == 'MONTH':
-            ranking = self.db.rankings.find_one({'chart': item['chart'], 'type': item['type'], 'date': item['date']})
-            if ranking is None:
-                self.db.rankings.insert_one(item)
+        ranking = self.db.rankings.find_one({'chart': item['chart'], 'type': item['type'], 'date': item['date']})
+        if ranking is None:
+            self.db.rankings.insert_one(item)
 
         item.pop('_id', None)
         return item
